@@ -291,7 +291,7 @@ int main() {
         outfile << "QuickSort,Random," << size << ",Random," << (quick_sort_total_time_random / repetitions) << "\n";
         outfile << "IntroSort,Random," << size << ",Random," << (intro_sort_total_time_random / repetitions) << "\n";
         
-        /*
+        
         // ==================== PARTIALLY SORTED =========================
         for (int pct_idx = 0; pct_idx < num_percentages; ++pct_idx) {
             double percent = percentages[pct_idx];
@@ -332,8 +332,8 @@ int main() {
             outfile << "QuickSort,PartialSorted," << size << "," << percent << "%," << (quick_sort_total_time_partial / repetitions) << "\n";
             outfile << "IntroSort,PartialSorted," << size << "," << percent << "%," << (intro_sort_total_time_partial / repetitions) << "\n";
         }
-        */
-        /*
+        
+        
         // ==================== REVERSE SORTED =========================
         double merge_sort_total_time_reverse = 0.0;
         double quick_sort_total_time_reverse = 0.0;
@@ -370,7 +370,7 @@ int main() {
         outfile << "MergeSort,ReverseSorted," << size << ",Reverse," << (merge_sort_total_time_reverse / repetitions) << "\n";
         outfile << "QuickSort,ReverseSorted," << size << ",Reverse," << (quick_sort_total_time_reverse / repetitions) << "\n";
         outfile << "IntroSort,ReverseSorted," << size << ",Reverse," << (intro_sort_total_time_reverse / repetitions) << "\n";
-        */   
+          
     }
 
     outfile.close();
