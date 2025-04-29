@@ -9,7 +9,9 @@
 
 using namespace std;
 
-// ARRAYS ----------------------------------------------------------------------------------------------------------------------
+////////////
+// ARRAYS //
+////////////
 template <typename T>
 T* generate_random_array(int size) {
     T* arr = new T[size];
@@ -59,27 +61,14 @@ T* generate_reverse_sorted_array(int size) {
 }
 
 template <typename T>
-void print_array(const T* arr, int size, int limit = 20) {
-    cout << "[";
-    int to_print = min(size, limit);
-    for (int i = 0; i < to_print; ++i) {
-        cout << arr[i];
-        if (i < to_print - 1) cout << ", ";
-    }
-    if (to_print < size) cout << ", ...";
-    cout << "]" << endl;
-}
-
-template <typename T>
 void delete_array(T* arr) {
     delete[] arr;
 }
-
-// SORTING ALGORTYHMS -----------------------------------------------------------------------------------------------------------------------------
+////////////////////////
+// SORTING ALGORTYHMS //
+////////////////////////
 
 // MERGE SORT
-
-// Funkcja pomocnicza: scalanie dwóch podtablic
 template <typename T>
 void merge(T* S1, int n1, T* S2, int n2, T* S) {
     int i = 0, j = 0, k = 0;
@@ -95,71 +84,60 @@ void merge(T* S1, int n1, T* S2, int n2, T* S) {
         S[k++] = S2[j++];
 }
 
-// Funkcja główna: sortowanie przez scalanie
 template <typename T>
 void merge_sort(T* S, int n) {
-    if (n <= 1) return; // już posortowana
+    if (n <= 1) return;
 
     int n1 = n / 2;
     int n2 = n - n1;
 
-    // Tworzymy dwie tymczasowe tablice
     T* S1 = new T[n1];
     T* S2 = new T[n2];
 
-    // Kopiujemy dane
     for (int i = 0; i < n1; ++i)
         S1[i] = S[i];
     for (int i = 0; i < n2; ++i)
         S2[i] = S[n1 + i];
 
-    // Rekurencyjnie sortujemy obie części
     merge_sort(S1, n1);
     merge_sort(S2, n2);
 
-    // Scalanie dwóch posortowanych tablic do oryginalnej
     merge(S1, n1, S2, n2, S);
 
-    // Usuwamy tymczasowe tablice
     delete[] S1;
     delete[] S2;
 }
-// QUICK SORT
 
-// Funkcja pomocnicza: krok sortowania quicksort
+// QUICK SORT
 template <typename T>
 void quickSortStep(T* S, int a, int b) {
-    if (a >= b) return; // 0 lub 1 element - nic nie trzeba robić
+    if (a >= b) return;
 
-    T pivot = S[a + (b - a) / 2]; // pivot jako środkowy element
+    T pivot = S[a + (b - a) / 2];
 
     int l = a;
-    int r = b;
+    int r = b - 1;
 
     while (l <= r) {
-        while (S[l] < pivot) l++;
-        while (S[r] > pivot) r--;
-        if (l <= r) {
+        while (l <= r && !(pivot < S[l])) l++;
+        while (r >= l && !(S[r] < pivot)) r--;
+        if (l < r)
             swap(S[l], S[r]);
-            l++;
-            r--;
-        }
     }
+    swap(S[l], S[b]);
 
-    // Rekurencyjnie sortujemy dwie części
-    if (a < r) quickSortStep(S, a, r);
-    if (l < b) quickSortStep(S, l, b);
+    quickSortStep(S, a, l - 1);
+    quickSortStep(S, l + 1, b);
 }
 
-// Funkcja główna: quicksort dla tablicy
 template <typename T>
 void quickSort(T* S, int n) {
-    if (n <= 1) return; // już posortowana
+    if (n <= 1) return;
     quickSortStep(S, 0, n - 1);
 }
 
-// HEAP SORT FOR INTROSORT
-// HEAPSORT
+
+// HEAPSORT FOR INTROSORT
 template <typename T>
 void heapify(T* arr, int n, int i) {
     int largest = i;
@@ -180,11 +158,9 @@ void heapify(T* arr, int n, int i) {
 
 template <typename T>
 void heapSort(T* arr, int n) {
-    // Budujemy kopiec (heap)
     for (int i = n / 2 - 1; i >= 0; --i)
         heapify(arr, n, i);
 
-    // Wyciągamy elementy z kopca jeden po drugim
     for (int i = n - 1; i > 0; --i) {
         swap(arr[0], arr[i]);
         heapify(arr, i, 0);
@@ -192,8 +168,6 @@ void heapSort(T* arr, int n) {
 }
 
 // INTROSORT
-
-// Funkcja pomocnicza do introsortu
 template <typename T>
 void introsortUtil(T* arr, int begin, int end, int depthLimit) {
     int size = end - begin + 1;
@@ -223,14 +197,15 @@ void introsortUtil(T* arr, int begin, int end, int depthLimit) {
     introsortUtil(arr, l + 1, end, depthLimit - 1);
 }
 
-// Funkcja główna: introsort
 template <typename T>
 void introsort(T* arr, int n) {
     int depthLimit = 2 * log2(n);
     introsortUtil(arr, 0, n - 1, depthLimit);
 }
 
-// MESURE TIME FUNCTION
+//////////////////////////
+// MESURE TIME FUNCTION //
+//////////////////////////
 template<typename T, typename SortFunc>
 double measure_sort_time(T* arr, int size, SortFunc sort_func) {
     auto start = chrono::high_resolution_clock::now();
@@ -240,7 +215,6 @@ double measure_sort_time(T* arr, int size, SortFunc sort_func) {
     return elapsed.count();
 }
 
-// MAIN -----------------------------------------------------------------------------------------------------------------------------
 int main() {
     const int num_sizes = 9;
     int sizes[num_sizes] = {100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000};
@@ -254,7 +228,7 @@ int main() {
     for (int size_idx = 0; size_idx < num_sizes; ++size_idx) {
         int size = sizes[size_idx];
         
-        // ==================== RANDOM =========================
+        // RANDOM
         double merge_sort_total_time_random = 0.0;
         double quick_sort_total_time_random = 0.0;
         double intro_sort_total_time_random = 0.0;
@@ -292,7 +266,7 @@ int main() {
         outfile << "IntroSort,Random," << size << ",Random," << (intro_sort_total_time_random / repetitions) << "\n";
         
         
-        // ==================== PARTIALLY SORTED =========================
+        // PARTIALLY SORTED
         for (int pct_idx = 0; pct_idx < num_percentages; ++pct_idx) {
             double percent = percentages[pct_idx];
 
@@ -334,7 +308,7 @@ int main() {
         }
         
         
-        // ==================== REVERSE SORTED =========================
+        // REVERSE SORTED
         double merge_sort_total_time_reverse = 0.0;
         double quick_sort_total_time_reverse = 0.0;
         double intro_sort_total_time_reverse = 0.0;
@@ -370,7 +344,6 @@ int main() {
         outfile << "MergeSort,ReverseSorted," << size << ",Reverse," << (merge_sort_total_time_reverse / repetitions) << "\n";
         outfile << "QuickSort,ReverseSorted," << size << ",Reverse," << (quick_sort_total_time_reverse / repetitions) << "\n";
         outfile << "IntroSort,ReverseSorted," << size << ",Reverse," << (intro_sort_total_time_reverse / repetitions) << "\n";
-          
     }
 
     outfile.close();
@@ -378,5 +351,3 @@ int main() {
 
     return 0;
 }
-// Kompilacja: g++ -std=c++2a test.cpp
-// Uruchomienie: .\a.exe
